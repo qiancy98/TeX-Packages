@@ -1,5 +1,5 @@
 \NeedsTeXFormat{LaTeX2e}[2015/01/01]
-\ProvidesClass{SJTUexam}[2021/09/18 SJTU Exam class v0.0]
+\ProvidesClass{SJTUexam}[2021/10/25 SJTU Exam class v0.1]
 
 % Handle options
 \newif\ifanswer
@@ -110,15 +110,15 @@
 \makeatletter
 \renewcommand{\maketitle}{%
 	\ifanswer
-		\title{{\ziju{0.5} \Huge 上海交通大学试卷(答案)}}
+		\title{上海交通大学试卷(答案)}
 	\else
-		\title{{\ziju{0.5} \Huge 上海交通大学试卷}}
+		\title{上海交通大学试卷}
 	\fi
 	\vspace{2pc}
 	\begin{center}
-		{\heiti\@title}
+		{\heiti \ziju{0.5} \Huge \@title}
 
-		\@date
+		{\small \@date}
 
 		\ifx\course\undefined
 			\ClassWarning{exam}{未定义课程名称\protect\course.\MessageBreak 使用\protect\newcommand{\protect\course}{课程名称}以定义之}
@@ -133,31 +133,57 @@
 			\newcommand{\quiztime}{}
 		\fi
 
-		\ifanswer
 		{%
 			\large
-			\begin{tabular}{l}
-				\\
-				课程名称：\minwidthbox[4cm]{\course} \\
-			\end{tabular}
+			\renewcommand{\arraystretch}{2}
+			\ifanswer
+				\begin{tabular}{l}
+					课程名称：\minwidthbox[4cm]{\course} \\
+				\end{tabular}
+			\else
+				\begin{tabular}{ll}
+					\mbox{班级号：\minwidthbox{}} \hspace{0.2cm} \mbox{学号：\minwidthbox{}} & \mbox{姓名：\minwidthbox[3cm]{}} \\
+					\mbox{考试时间：\minwidthbox[6cm]{\quiztime}} & \mbox{地点：\minwidthbox{\location}} \\
+					\mbox{课程名称：\minwidthbox[6cm]{\course}} & \mbox{成绩：\minwidthbox{}} \\
+				\end{tabular}
+				\vspace{1pc}
+			\fi
 		}
-		\else
-		{%
-			\large
-			\begin{tabular}{ll}
-				\\
-				班级号\underline{\hskip 3cm} 学号\underline{\hskip 3cm} & 姓名\underline{\hskip 4cm} \\
-				\\
-					考试时间\underline{\hskip0.55cm \quiztime \hskip 0.55cm}  & 地点\underline{\hskip0.55cm \location \hskip0.5cm} \\
-				\\
-				课程名称\underline{\hskip2.2cm \course \hskip1.5cm} &  成绩\underline{\hskip 4cm} \\
-			\end{tabular}
-			\vspace{1pc}
-		}
-		\fi
 	\end{center}
 }
 \makeatother
+
+% 登分表
+\RequirePackage{expl3}
+\ExplSyntaxOn
+\cs_new_protected:Npn \myfor #1#2#3#4
+  {
+    \int_step_inline:nnnn {#1} {#2} {#3} {#4}
+  }
+\ExplSyntaxOff
+
+\newcommand*{\scoretable}[2][\relax]{{
+	\ifanswer\else
+		\large \renewcommand{\arraystretch}{2}
+		\newdimen\mylength
+		\settowidth{\mylength}{我承诺，，我将严}
+		\begin{minipage}{\mylength}
+			\heiti
+			我承诺，我将严 \\
+			格遵守考试纪律。\\
+			\\
+			承诺人：\minwidthbox[1.5cm]{}
+		\end{minipage}
+		\addtolength{\mylength}{-2\mylength}
+		\addtolength{\mylength}{-11pt}
+		\addtolength{\mylength}{1\textwidth}
+		\begin{tabularx}{\mylength}{| >{\heiti}Y *{#2}{| Y} || >{\heiti}Y |}
+			\hline
+			题号 & \ifx#1\relax \myfor{1}{1}{#2}{##1&} \else #1 \fi 合计 \\ \hline
+			得分 & \myfor{1}{1}{#2}{&}     \\ \hline
+		\end{tabularx}
+	\fi
+}}
 
 % Newcommands
 \newcommand{\qnewpage}{\ifanswer\else\newpage\fi}
