@@ -1,5 +1,5 @@
 \NeedsTeXFormat{LaTeX2e}[2015/01/01]
-\ProvidesPackage{QCYPreamable}[2021/10/17 QianCY preamable v0.0]
+\ProvidesPackage{QCYPreamable}[2021/10/25 QianCY preamable v0.1]
 
 \RequirePackage{expl3}
 \RequirePackage{l3keys2e}
@@ -101,10 +101,10 @@
 \fi
 
 % New commands
-\newcommand*{\email}[1]{\href{mailto:#1}{\nolinkurl{#1}}}
-\newcommand*{\keywords}{\par\bigskip\noindent\textbf{Keywords: }} % 用来在摘要里加上keywords
-\newcommand*{\numberthis}{\refstepcounter{equation}\tag{\theequation}} % 用来在align*加入tag
-\newcommand*{\eqgap}{\mathrel{\phantom{=}}} % 空白的等号
-\newcommand*{\setto}{\coloneqq}
+\providecommand*{\email}[1]{\href{mailto:#1}{\nolinkurl{#1}}}
+\providecommand*{\keywords}{\par\bigskip\noindent\textbf{Keywords: }} % 用来在摘要里加上keywords
+\providecommand*{\numberthis}{\refstepcounter{equation}\tag{\theequation}} % 用来在align*加入tag
+\providecommand*{\eqgap}{\mathrel{\phantom{=}}} % 空白的等号
+\providecommand*{\setto}{\coloneqq}
 
 \endinput
