@@ -1,5 +1,6 @@
 \NeedsTeXFormat{LaTeX2e}[2015/01/01]
-\ProvidesClass{SJTUexam}[2021/10/25 SJTU Exam class v0.1]
+\ProvidesClass{SJTUexam}[2021/10/26 SJTU Exam class v0.1a]
+% 注意！目前版本不保证向前兼容。
 
 % Handle options
 \newif\ifanswer
@@ -17,7 +18,7 @@
 \RequirePackage{environ}
 \RequirePackage{titlesec}
 \RequirePackage{mdframed}
-\usepackage[quiet]{fontspec} % 抑制所有报错！！！谨慎使用
+\RequirePackage[quiet]{fontspec} % 抑制所有报错！！！谨慎使用
 \RequirePackage{ctex}
 \RequirePackage{subfiles}
 
