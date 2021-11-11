@@ -1,5 +1,5 @@
 \NeedsTeXFormat{LaTeX2e}[2019/05/03] % 2019/05/03 is need for \NewDocumentEnvironment
-\ProvidesPackage{QCYPreamable}[2021/11/11 QianCY preamable v0.2]
+\ProvidesPackage{QCYPreamable}[2021/11/11 QianCY preamable v0.2a]
 
 % 待了解：tabu
 
@@ -13,20 +13,20 @@
 
 \ExplSyntaxOn
 \keys_define:nn { QCYPreamable } {
-	biblatex          .code:n = {\PassOptionsToPackage{#1}{biblatex}},
-	hyperref          .code:n = {\PassOptionsToPackage{#1}{hyperref}},
-	cleveref          .code:n = {\PassOptionsToPackage{#1}{cleveref}},
-	url               .code:n = {\PassOptionsToPackage{#1}{url     }},
+    biblatex          .code:n = {\PassOptionsToPackage{#1}{biblatex}},
+    hyperref          .code:n = {\PassOptionsToPackage{#1}{hyperref}},
+    cleveref          .code:n = {\PassOptionsToPackage{#1}{cleveref}},
+    url               .code:n = {\PassOptionsToPackage{#1}{url     }},
     printbibliography .code:n = {\AtEndDocument{\printbibliography}},
     draft             .code:n = {\DraftModetrue},
     AutoTheorem       .code:n = {\AutoTheoremtrue},
     DraftSecBreak     .code:n = { % 如果在草稿模式下，那么每节前分页，以节省打印纸张。
-									\ifDraftMode
-										\AtEndOfPackage{
-											\pretocmd{\section}{\clearpage}{}{\GenericWarning{Error when prepending to command \backslash section}}
-										}
-									\fi
-								},
+                                    \ifDraftMode
+                                        \AtEndOfPackage{
+                                            \pretocmd{\section}{\clearpage}{}{\GenericWarning{Error when prepending to command \backslash section}}
+                                        }
+                                    \fi
+                                },
 }
 \ProcessKeysOptions { QCYPreamable }
 \ExplSyntaxOff
@@ -51,76 +51,76 @@
 \RequirePackage[isbn=false]{biblatex} % style=alphabetic, numeric, authoryear.
 \ExecuteBibliographyOptions
 {
-	maxcitenames=3, maxbibnames=100, minnames=3,
+    maxcitenames=3, maxbibnames=100, minnames=3,
 }
 \AtEveryBibitem{
-	\clearfield{issn}
+    \clearfield{issn}
 }
 \RequirePackage{hyperref}
 \RequirePackage{cleveref}
 \ifDraftMode
-	\RequirePackage[notref,notcite]{showkeys}
+    \RequirePackage[notref,notcite]{showkeys}
 \fi
 
 \DeclareRobustCommand{\ProofStyle}[2][\square]{
-	\cspreto{#2}{\pushQED{\qed}\renewcommand*{\qedsymbol}{\ensuremath{#1}}}
-	\cspreto{end#2}{\popQED}
+    \cspreto{#2}{\pushQED{\qed}\renewcommand*{\qedsymbol}{\ensuremath{#1}}}
+    \cspreto{end#2}{\popQED}
 }
 
 % Environments
 \newtheoremstyle{ModifiedRemark}
-	{0.5\topsep}             % ABOVE SPACE
-	{0.5\topsep}             % BELOW SPACE
-	{\normalfont}            % BODY FONT
-	{0pt}                    % INDENT (empty value is the same as 0pt)
-	{\scshape}               % HEAD FONT % Different from Environment{remark}
-	{.}                      % HEAD PUNCT
-	{5pt plus 1pt minus 1pt} % HEAD SPACE
-	{}                       % CUSTOM-HEAD-SPEC
+    {0.5\topsep}             % ABOVE SPACE
+    {0.5\topsep}             % BELOW SPACE
+    {\normalfont}            % BODY FONT
+    {0pt}                    % INDENT (empty value is the same as 0pt)
+    {\scshape}               % HEAD FONT % Different from Environment{remark}
+    {.}                      % HEAD PUNCT
+    {5pt plus 1pt minus 1pt} % HEAD SPACE
+    {}                       % CUSTOM-HEAD-SPEC
 
 \ifAutoTheorem
-	\theoremstyle{plain}
-	\newtheorem{theorem}{Theorem}[section]
-	\newtheorem{proposition}[theorem]{Proposition}
-	\newtheorem{corollary}[theorem]{Corollary}
-	\newtheorem{lemma}[theorem]{Lemma}
-	\newtheorem{conjecture}[theorem]{Conjecture}
-	\newtheorem{question}[theorem]{Question}
-	\theoremstyle{definition}
-	\newtheorem{definition}[theorem]{Definition}
-	\theoremstyle{remark}
-	\newtheorem{example}[theorem]{Example}
-	\newtheorem{remark}[theorem]{Remark}
-	\ProofStyle[\Diamond]{example}
-	\ProofStyle[\Diamond]{remark}
-	\theoremstyle{ModifiedRemark}
-	\newtheorem{claim}{Claim}[theorem]
-	% 告诉cleveref如何引用环境
-	\crefname{conjecture}{Conjecture}{Conjectures}
-	\crefname{example}{Example}{Examples}
-	\crefname{claim}{Claim}{Claims}
+    \theoremstyle{plain}
+    \newtheorem{theorem}{Theorem}[section]
+    \newtheorem{proposition}[theorem]{Proposition}
+    \newtheorem{corollary}[theorem]{Corollary}
+    \newtheorem{lemma}[theorem]{Lemma}
+    \newtheorem{conjecture}[theorem]{Conjecture}
+    \newtheorem{question}[theorem]{Question}
+    \theoremstyle{definition}
+    \newtheorem{definition}[theorem]{Definition}
+    \theoremstyle{remark}
+    \newtheorem{example}[theorem]{Example}
+    \newtheorem{remark}[theorem]{Remark}
+    \ProofStyle[\Diamond]{example}
+    \ProofStyle[\Diamond]{remark}
+    \theoremstyle{ModifiedRemark}
+    \newtheorem{claim}{Claim}[theorem]
+    % 告诉cleveref如何引用环境
+    \crefname{conjecture}{Conjecture}{Conjectures}
+    \crefname{example}{Example}{Examples}
+    \crefname{claim}{Claim}{Claims}
 
-	\NewDocumentEnvironment{bordmatrix}{+b}
-	{
-		\renewcommand{\\}{\cr}
-		\bordermatrix{#1}
-	}{}
+    \NewDocumentEnvironment{bordmatrix}{+b}
+    {
+        \renewcommand{\\}{\cr}
+        \bordermatrix{#1}
+    }{}
 
-	\newlist{case}{enumerate}{5}
-	\setlist[case]{
-		format={\scshape Case \normalfont},
-		label*=\arabic*.,
-		align=left,
-		left=0pt .. 0pt,
-		labelsep=5pt plus 1pt minus 1pt,
-		itemindent=!,
-		listparindent=\parindent
-	}
-	\crefname{casei}{Case}{Cases}
-	\crefname{caseii}{Case}{Cases}
-	\crefname{caseiii}{Case}{Cases}
-	\crefname{caseiv}{Case}{Cases}
-	\crefname{casev}{Case}{Cases}
+    \newlist{case}{enumerate}{5}
+    \setlist[case]{
+        format={\scshape Case \normalfont},
+        label*=\arabic*.,
+        align=left,
+        left=0pt .. 0pt,
+        labelsep=5pt plus 1pt minus 1pt,
+        itemindent=!,
+        listparindent=\parindent
+    }
+    \crefname{casei}{Case}{Cases}
+    \crefname{caseii}{Case}{Cases}
+    \crefname{caseiii}{Case}{Cases}
+    \crefname{caseiv}{Case}{Cases}
+    \crefname{casev}{Case}{Cases}
 \fi
 
 % New commands

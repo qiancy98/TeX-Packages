@@ -1,5 +1,5 @@
 \NeedsTeXFormat{LaTeX2e}[2015/01/01]
-\ProvidesClass{SJTUexam}[2021/10/26 SJTU Exam class v0.1a]
+\ProvidesClass{SJTUexam}[2021/11/11 SJTU Exam class v0.1b]
 % 注意！目前版本不保证向前兼容。
 
 % Handle options
@@ -79,7 +79,7 @@
 
 \newcounter{subquestion}
 \newenvironment{subquestion}[1]
-	{\refstepcounter{subquestion}\noindent \textbf{\thequestion.\thesubquestion}  #1}
+    {\refstepcounter{subquestion}\noindent \textbf{\thequestion.\thesubquestion}  #1}
 
 \makeatletter
 \@addtoreset{subquestion}{question}
@@ -110,47 +110,47 @@
 
 \makeatletter
 \renewcommand{\maketitle}{%
-	\ifanswer
-		\title{上海交通大学试卷(答案)}
-	\else
-		\title{上海交通大学试卷}
-	\fi
-	\vspace{2pc}
-	\begin{center}
-		{\heiti \ziju{0.5} \Huge \@title}
+    \ifanswer
+        \title{上海交通大学试卷(答案)}
+    \else
+        \title{上海交通大学试卷}
+    \fi
+    \vspace{2pc}
+    \begin{center}
+        {\heiti \ziju{0.5} \Huge \@title}
 
-		{\small \@date}
+        {\small \@date}
 
-		\ifx\course\undefined
-			\ClassWarning{exam}{未定义课程名称\protect\course.\MessageBreak 使用\protect\newcommand{\protect\course}{课程名称}以定义之}
-			\newcommand{\course}{}
-		\fi
-		\ifx\location\undefined
-			\ClassWarning{exam}{未定义考试地点\protect\location.\MessageBreak 使用\protect\newcommand{\protect\location}{考试地点}以定义之}
-			\newcommand{\location}{}
-		\fi
-		\ifx\quiztime\undefined
-			\ClassWarning{exam}{未定义考试时间\protect\quiztime.\MessageBreak 使用\protect\newcommand{\protect\quiztime}{考试时间}以定义之}
-			\newcommand{\quiztime}{}
-		\fi
+        \ifx\course\undefined
+            \ClassWarning{exam}{未定义课程名称\protect\course.\MessageBreak 使用\protect\newcommand{\protect\course}{课程名称}以定义之}
+            \newcommand{\course}{}
+        \fi
+        \ifx\location\undefined
+            \ClassWarning{exam}{未定义考试地点\protect\location.\MessageBreak 使用\protect\newcommand{\protect\location}{考试地点}以定义之}
+            \newcommand{\location}{}
+        \fi
+        \ifx\quiztime\undefined
+            \ClassWarning{exam}{未定义考试时间\protect\quiztime.\MessageBreak 使用\protect\newcommand{\protect\quiztime}{考试时间}以定义之}
+            \newcommand{\quiztime}{}
+        \fi
 
-		{%
-			\large
-			\renewcommand{\arraystretch}{2}
-			\ifanswer
-				\begin{tabular}{l}
-					课程名称：\minwidthbox[4cm]{\course} \\
-				\end{tabular}
-			\else
-				\begin{tabular}{ll}
-					\mbox{班级号：\minwidthbox{}} \hspace{0.2cm} \mbox{学号：\minwidthbox{}} & \mbox{姓名：\minwidthbox[3cm]{}} \\
-					\mbox{考试时间：\minwidthbox[6cm]{\quiztime}} & \mbox{地点：\minwidthbox{\location}} \\
-					\mbox{课程名称：\minwidthbox[6cm]{\course}} & \mbox{成绩：\minwidthbox{}} \\
-				\end{tabular}
-				\vspace{1pc}
-			\fi
-		}
-	\end{center}
+        {%
+            \large
+            \renewcommand{\arraystretch}{2}
+            \ifanswer
+                \begin{tabular}{l}
+                    课程名称：\minwidthbox[4cm]{\course} \\
+                \end{tabular}
+            \else
+                \begin{tabular}{ll}
+                    \mbox{班级号：\minwidthbox{}} \hspace{0.2cm} \mbox{学号：\minwidthbox{}} & \mbox{姓名：\minwidthbox[3cm]{}} \\
+                    \mbox{考试时间：\minwidthbox[6cm]{\quiztime}} & \mbox{地点：\minwidthbox{\location}} \\
+                    \mbox{课程名称：\minwidthbox[6cm]{\course}} & \mbox{成绩：\minwidthbox{}} \\
+                \end{tabular}
+                \vspace{1pc}
+            \fi
+        }
+    \end{center}
 }
 \makeatother
 
@@ -164,26 +164,26 @@
 \ExplSyntaxOff
 
 \newcommand*{\scoretable}[2][\relax]{{
-	\ifanswer\else
-		\large \renewcommand{\arraystretch}{2}
-		\newdimen\mylength
-		\settowidth{\mylength}{我承诺，，我将严}
-		\begin{minipage}{\mylength}
-			\heiti
-			我承诺，我将严 \\
-			格遵守考试纪律。\\
-			\\
-			承诺人：\minwidthbox[1.5cm]{}
-		\end{minipage}
-		\addtolength{\mylength}{-2\mylength}
-		\addtolength{\mylength}{-11pt}
-		\addtolength{\mylength}{1\textwidth}
-		\begin{tabularx}{\mylength}{| >{\heiti}Y *{#2}{| Y} || >{\heiti}Y |}
-			\hline
-			题号 & \ifx#1\relax \myfor{1}{1}{#2}{##1&} \else #1 \fi 合计 \\ \hline
-			得分 & \myfor{1}{1}{#2}{&}     \\ \hline
-		\end{tabularx}
-	\fi
+    \ifanswer\else
+        \large \renewcommand{\arraystretch}{2}
+        \newdimen\mylength
+        \settowidth{\mylength}{我承诺，，我将严}
+        \begin{minipage}{\mylength}
+            \heiti
+            我承诺，我将严 \\
+            格遵守考试纪律。\\
+            \\
+            承诺人：\minwidthbox[1.5cm]{}
+        \end{minipage}
+        \addtolength{\mylength}{-2\mylength}
+        \addtolength{\mylength}{-11pt}
+        \addtolength{\mylength}{1\textwidth}
+        \begin{tabularx}{\mylength}{| >{\heiti}Y *{#2}{| Y} || >{\heiti}Y |}
+            \hline
+            题号 & \ifx#1\relax \myfor{1}{1}{#2}{##1&} \else #1 \fi 合计 \\ \hline
+            得分 & \myfor{1}{1}{#2}{&}     \\ \hline
+        \end{tabularx}
+    \fi
 }}
 
 % Newcommands
