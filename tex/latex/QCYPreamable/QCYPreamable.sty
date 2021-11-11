@@ -1,7 +1,9 @@
-\NeedsTeXFormat{LaTeX2e}[2015/01/01]
-\ProvidesPackage{QCYPreamable}[2021/10/25 QianCY preamable v0.1]
+\NeedsTeXFormat{LaTeX2e}[2019/05/03] % 2019/05/03 is need for \NewDocumentEnvironment
+\ProvidesPackage{QCYPreamable}[2021/11/11 QianCY preamable v0.2]
 
-\RequirePackage{expl3}
+% 待了解：tabu
+
+\RequirePackage{expl3,xparse}
 \RequirePackage{l3keys2e}
 
 \newif\ifDraftMode
@@ -37,13 +39,15 @@
 \RequirePackage{bbm}      % 空心体 \mathbbm
 \RequirePackage{dsfont}   % 空心体 \mathds
 
-% Graph
+% Labeling
+% 为了造case环境
+\RequirePackage{enumitem}
 % 支持子图，引用为Figure 1(a)
 \RequirePackage[labelformat=simple]{subcaption}
 \renewcommand*\thesubfigure{(\alph{subfigure})}
 \renewcommand*\thesubtable{(\alph{subtable})}
 
-% Label, Link
+% Citation
 \RequirePackage[isbn=false]{biblatex} % style=alphabetic, numeric, authoryear.
 \ExecuteBibliographyOptions
 {
@@ -90,14 +94,33 @@
 	\ProofStyle[\Diamond]{example}
 	\ProofStyle[\Diamond]{remark}
 	\theoremstyle{ModifiedRemark}
-	\newtheorem{case}{Case}[theorem]
-	\newtheorem{claim}[case]{Claim}
+	\newtheorem{claim}{Claim}[theorem]
 	% 告诉cleveref如何引用环境
-	\renewcommand*{\thecase}{\arabic{case}}
 	\crefname{conjecture}{Conjecture}{Conjectures}
 	\crefname{example}{Example}{Examples}
-	\crefname{case}{Case}{Cases}
 	\crefname{claim}{Claim}{Claims}
+
+	\NewDocumentEnvironment{bordmatrix}{+b}
+	{
+		\renewcommand{\\}{\cr}
+		\bordermatrix{#1}
+	}{}
+
+	\newlist{case}{enumerate}{5}
+	\setlist[case]{
+		format={\scshape Case \normalfont},
+		label*=\arabic*.,
+		align=left,
+		left=0pt .. 0pt,
+		labelsep=5pt plus 1pt minus 1pt,
+		itemindent=!,
+		listparindent=\parindent
+	}
+	\crefname{casei}{Case}{Cases}
+	\crefname{caseii}{Case}{Cases}
+	\crefname{caseiii}{Case}{Cases}
+	\crefname{caseiv}{Case}{Cases}
+	\crefname{casev}{Case}{Cases}
 \fi
 
 % New commands
