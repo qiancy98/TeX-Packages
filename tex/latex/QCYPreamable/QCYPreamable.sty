@@ -1,5 +1,5 @@
 \NeedsTeXFormat{LaTeX2e}[2019/05/03] % 2019/05/03 is need for \NewDocumentEnvironment
-\ProvidesPackage{QCYPreamable}[2021/11/11 QianCY preamable v0.2a]
+\ProvidesPackage{QCYPreamable}[2022/01/26 QianCY preamable v0.3]
 
 % 待了解：tabu
 
@@ -9,9 +9,10 @@
 \newif\ifDraftMode
 \newif\ifAutoTheorem
 \DraftModefalse
-\AutoTheoremfalse
 
 \ExplSyntaxOn
+\bool_new:N  \l__QCYPreamable_AutoTheorem_bool
+\bool_set:Nn \l__QCYPreamable_AutoTheorem_bool \c_false_bool
 \keys_define:nn { QCYPreamable } {
     biblatex          .code:n = {\PassOptionsToPackage{#1}{biblatex}},
     hyperref          .code:n = {\PassOptionsToPackage{#1}{hyperref}},
@@ -19,11 +20,13 @@
     url               .code:n = {\PassOptionsToPackage{#1}{url     }},
     printbibliography .code:n = {\AtEndDocument{\printbibliography}},
     draft             .code:n = {\DraftModetrue},
-    AutoTheorem       .code:n = {\AutoTheoremtrue},
+    AutoTheorem       .code:n = {
+        \bool_set:Nn \l__QCYPreamable_AutoTheorem_bool \c_true_bool
+    },
     DraftSecBreak     .code:n = { % 如果在草稿模式下，那么每节前分页，以节省打印纸张。
                                     \ifDraftMode
                                         \AtEndOfPackage{
-                                            \pretocmd{\section}{\clearpage}{}{\GenericWarning{Error when prepending to command \backslash section}}
+                                            \pretocmd{\section}{\clearpage}{}{\GenericWarning{Error when prepending `\backslash clearpage' to command `\backslash section'}}
                                         }
                                     \fi
                                 },
@@ -63,9 +66,14 @@
 \fi
 
 \DeclareRobustCommand{\ProofStyle}[2][\square]{
-    \cspreto{#2}{\pushQED{\qed}\renewcommand*{\qedsymbol}{\ensuremath{#1}}}
+    \cspreto{#2}{\pushQED{{\hfill\ensuremath{#1}}}}
     \cspreto{end#2}{\popQED}
 }
+
+% \DeclareRobustCommand{\ProofStyle}[2][\square]{
+%     \cspreto{#2}{\pushQED{\qed}\renewcommand*{\qedsymbol}{\ensuremath{#1}}}
+%     \cspreto{end#2}{\popQED}
+% }
 
 % Environments
 \newtheoremstyle{ModifiedRemark}
@@ -106,21 +114,33 @@
         \bordermatrix{#1}
     }{}
 
+    \newcommand{\nameofcase}[1]{\scshape Case \normalfont #1.}
     \newlist{case}{enumerate}{5}
     \setlist[case]{
-        format={\scshape Case \normalfont},
-        label*=\arabic*.,
+        format=\nameofcase,
+        label*=.\arabic*,
         align=left,
         left=0pt .. 0pt,
         labelsep=5pt plus 1pt minus 1pt,
         itemindent=!,
         listparindent=\parindent
     }
+    \setlist[case,1]{label=\arabic*}
     \crefname{casei}{Case}{Cases}
     \crefname{caseii}{Case}{Cases}
     \crefname{caseiii}{Case}{Cases}
     \crefname{caseiv}{Case}{Cases}
     \crefname{casev}{Case}{Cases}
+    % 这段代码有bug
+    % \ExplSyntaxOn
+    % \int_new:N \l_QCYPreamable_adder_int
+    % \int_set:Nn \l_QCYPreamable_adder_int 1
+    % \int_while_do:nn {\l_QCYPreamable_adder_int <= 5}
+    % {
+    %     \crefname{case \int_to_roman:n {\l_QCYPreamable_adder_int}}{Case}{Cases}
+    %     \int_incr:N \l_QCYPreamable_adder_int
+    % }
+    % \ExplSyntaxOff
 \fi
 
 % New commands
