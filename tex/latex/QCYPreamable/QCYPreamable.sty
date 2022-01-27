@@ -1,5 +1,5 @@
 \NeedsTeXFormat{LaTeX2e}[2019/05/03] % 2019/05/03 is need for \NewDocumentEnvironment
-\ProvidesPackage{QCYPreamable}[2022/01/26 QianCY preamable v0.3]
+\ProvidesPackage{QCYPreamable}[2022/01/27 QianCY preamable v0.3a]
 
 % 待了解：tabu
 
@@ -7,7 +7,6 @@
 \RequirePackage{l3keys2e}
 
 \newif\ifDraftMode
-\newif\ifAutoTheorem
 \DraftModefalse
 
 \ExplSyntaxOn
@@ -32,7 +31,6 @@
                                 },
 }
 \ProcessKeysOptions { QCYPreamable }
-\ExplSyntaxOff
 
 \RequirePackage{amsmath,amsthm,amssymb,mathtools} % Basic Packages
 \RequirePackage{regexpatch} % 替代etoolbox提供各种钩子。
@@ -86,7 +84,8 @@
     {5pt plus 1pt minus 1pt} % HEAD SPACE
     {}                       % CUSTOM-HEAD-SPEC
 
-\ifAutoTheorem
+\bool_if:NT \l__QCYPreamable_AutoTheorem_bool
+{
     \theoremstyle{plain}
     \newtheorem{theorem}{Theorem}[section]
     \newtheorem{proposition}[theorem]{Proposition}
@@ -141,7 +140,7 @@
     %     \int_incr:N \l_QCYPreamable_adder_int
     % }
     % \ExplSyntaxOff
-\fi
+}
 
 % New commands
 \providecommand*{\email}[1]{\href{mailto:#1}{\nolinkurl{#1}}}
@@ -150,4 +149,5 @@
 \providecommand*{\eqgap}{\mathrel{\phantom{=}}} % 空白的等号
 \providecommand*{\setto}{\coloneqq}
 
+\ExplSyntaxOff
 \endinput
