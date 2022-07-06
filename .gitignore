@@ -1,6 +1,10 @@
 # 编译文件
 *.xdv
 *.synctex.gz
+*.aux
+*.fdb_latexmk
+*.fls
+*.log
 
 # 测试文件
 tmp.*

@@ -1,5 +1,5 @@
 \NeedsTeXFormat{LaTeX2e}[2015/01/01]
-\ProvidesClass{SJTUexam}[2021/11/11 SJTU Exam class v0.1b]
+\ProvidesClass{SJTUexam}[2021/11/11 SJTU Exam class v0.1c]
 % 注意！目前版本不保证向前兼容。
 
 % Handle options
@@ -100,7 +100,7 @@
 \RequirePackage{lastpage}
 \RequirePackage{fancyhdr}
 \pagestyle{fancy}
-\fancyfoot[C]{--~ 第 \thepage 页 \ \  共 \pageref{LastPage} 页 ~--}
+\fancyfoot[C]{--~ 第 \thepage 页 \quad 共 \pageref{LastPage} 页 ~--}
 \renewcommand{\headrulewidth}{0pt}
 
 % make title
@@ -178,7 +178,7 @@
         \addtolength{\mylength}{-2\mylength}
         \addtolength{\mylength}{-11pt}
         \addtolength{\mylength}{1\textwidth}
-        \begin{tabularx}{\mylength}{| >{\heiti}Y *{#2}{| Y} || >{\heiti}Y |}
+        \begin{tabularx}{\mylength}{| >{\heiti}Y *{#2}{|Y} || >{\heiti}Y |}
             \hline
             题号 & \ifx#1\relax \myfor{1}{1}{#2}{##1&} \else #1 \fi 合计 \\ \hline
             得分 & \myfor{1}{1}{#2}{&}     \\ \hline
