@@ -1,7 +1,14 @@
 \NeedsTeXFormat{LaTeX2e}[2019/05/03] % 2019/05/03 is need for \NewDocumentEnvironment
-\ProvidesPackage{QCYPreamable}[2022/01/27 QianCY preamable v0.3a]
+\ProvidesPackage{QCYPreamable}[2022/07/07 QianCY preamable v0.4]
 
 % 待了解：tabu
+
+% Deal with the package `program', which is included in `Springer Nature LaTeX Template'
+\@ifpackageloaded{program}{
+    \normalbaroutside
+    \let\programR\R
+    \let\R\undefined
+}{\relax}
 
 \RequirePackage{expl3,xparse}
 \RequirePackage{l3keys2e}
@@ -113,7 +120,9 @@
         \bordermatrix{#1}
     }{}
 
-    \newcommand{\nameofcase}[1]{\scshape Case \normalfont #1.}
+    \NewDocumentEnvironment{comment}{+b}{}{}
+
+    \newcommand{\nameofcase}[1]{\scshape Case\ \normalfont #1.}
     \newlist{case}{enumerate}{5}
     \setlist[case]{
         format=\nameofcase,
