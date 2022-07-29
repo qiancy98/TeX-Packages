@@ -1,13 +1,20 @@
 \NeedsTeXFormat{LaTeX2e}[2019/05/03] % 2019/05/03 is need for \NewDocumentEnvironment
-\ProvidesPackage{QCYPreamable}[2022/07/07 QianCY preamable v0.4]
+\ProvidesPackage{QCYPreamable}[2022/07/29 QianCY preamable v0.4a]
 
 % 待了解：tabu
 
 % Deal with the package `program', which is included in `Springer Nature LaTeX Template'
 \@ifpackageloaded{program}{
     \normalbaroutside
-    \let\programR\R
     \let\R\undefined
+    \let\Z\undefined
+    \let\im\undefined
+    \edef\S{\expandafter \protect \expandafter \noexpand \csname S \endcsname} % This is the original definition of \S
+    % Deal with reference of `enumerate'
+    \labelformat{enumi}{#1}
+    \labelformat{enumii}{#1}
+    \labelformat{enumiii}{#1}
+    \labelformat{enumiv}{#1}
 }{\relax}
 
 \RequirePackage{expl3,xparse}
