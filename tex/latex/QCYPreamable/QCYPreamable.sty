@@ -1,5 +1,5 @@
 \NeedsTeXFormat{LaTeX2e}[2019/05/03] % 2019/05/03 is need for \NewDocumentEnvironment
-\ProvidesPackage{QCYPreamable}[2022/07/29 QianCY preamable v0.4a]
+\ProvidesPackage{QCYPreamable}[2023/01/26 QianCY preamable v0.5]
 
 % 待了解：tabu
 
@@ -26,6 +26,8 @@
 \ExplSyntaxOn
 \bool_new:N  \l__QCYPreamable_AutoTheorem_bool
 \bool_set:Nn \l__QCYPreamable_AutoTheorem_bool \c_false_bool
+\bool_new:N  \l__QCYPreamable_RefCheck_bool
+\bool_set:Nn \l__QCYPreamable_RefCheck_bool \c_false_bool
 \keys_define:nn { QCYPreamable } {
     biblatex          .code:n = {\PassOptionsToPackage{#1}{biblatex}},
     hyperref          .code:n = {\PassOptionsToPackage{#1}{hyperref}},
@@ -35,6 +37,9 @@
     draft             .code:n = {\DraftModetrue},
     AutoTheorem       .code:n = {
         \bool_set:Nn \l__QCYPreamable_AutoTheorem_bool \c_true_bool
+    },
+    RefCheck          .code:n = {
+        \bool_set:Nn \l__QCYPreamable_RefCheck_bool \c_true_bool
     },
     DraftSecBreak     .code:n = { % 如果在草稿模式下，那么每节前分页，以节省打印纸张。
                                     \ifDraftMode
@@ -72,7 +77,21 @@
     \clearfield{issn}
 }
 \RequirePackage{hyperref}
-\RequirePackage{cleveref}
+\bool_if:NTF \l__QCYPreamable_RefCheck_bool
+{
+    \RequirePackage{refcheck}
+    \def\crefname#1#2#3{}
+    \def\cref#1{\{\getrefs#1,\relax\}}
+    \def\getrefs#1,#2\relax{%
+        \ref{#1}%
+        \ifx\relax#2\relax\else
+            , \getrefs#2\relax
+        \fi
+    }
+}
+{
+    \RequirePackage[capitalise]{cleveref}
+}
 \ifDraftMode
     \RequirePackage[notref,notcite]{showkeys}
 \fi
