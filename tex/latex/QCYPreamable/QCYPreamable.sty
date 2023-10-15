@@ -1,5 +1,5 @@
 \NeedsTeXFormat{LaTeX2e}[2019/05/03] % 2019/05/03 is need for \NewDocumentEnvironment
-\ProvidesPackage{QCYPreamable}[2023/01/26 QianCY preamable v0.5]
+\ProvidesPackage{QCYPreamable}[2023/10/15 QianCY preamable v0.5a]
 
 % 待了解：tabu
 
@@ -41,13 +41,14 @@
     RefCheck          .code:n = {
         \bool_set:Nn \l__QCYPreamable_RefCheck_bool \c_true_bool
     },
-    DraftSecBreak     .code:n = { % 如果在草稿模式下，那么每节前分页，以节省打印纸张。
-                                    \ifDraftMode
-                                        \AtEndOfPackage{
-                                            \pretocmd{\section}{\clearpage}{}{\GenericWarning{Error when prepending `\backslash clearpage' to command `\backslash section'}}
-                                        }
-                                    \fi
-                                },
+    DraftSecBreak     .code:n = { 
+        % 如果在草稿模式下，那么每节前分页，以节省打印纸张。
+        \ifDraftMode
+            \AtEndOfPackage{
+                \pretocmd{\section}{\clearpage}{}{\GenericWarning{Error when prepending `\backslash clearpage' to command `\backslash section'}}
+            }
+        \fi
+    },
 }
 \ProcessKeysOptions { QCYPreamable }
 
@@ -61,8 +62,11 @@
 
 % Labeling
 % 为了造case环境
-\RequirePackage{enumitem}
-\makeatletter
+\@ifclassloaded{beamer}{
+    \RequirePackage[loadonly]{enumitem}
+}{
+    \RequirePackage{enumitem}
+}
 \providecommand{\setsublabel}[1][theorem]{
     \let\old@label\label
     \renewcommand{\label}[1]{%
@@ -73,7 +77,6 @@
         \endgroup
     }
 }
-\makeatother
 % 支持子图，引用为Figure 1(a)
 \RequirePackage[labelformat=simple]{subcaption}
 \renewcommand*\thesubfigure{(\alph{subfigure})}
