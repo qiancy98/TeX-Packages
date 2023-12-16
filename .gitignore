@@ -8,3 +8,6 @@
 
 # 测试文件
 tmp.*
+
+# ？？？
+tex/latex/CJM-AuthorTemplate/*
