@@ -1,5 +1,5 @@
 \NeedsTeXFormat{LaTeX2e}[2015/01/01]
-\ProvidesClass{SJTUexam}[2023/12/16 SJTU Exam class v0.2]
+\ProvidesClass{SJTUexam}[2023/12/17 SJTU Exam class v0.2a]
 % 
 % 注意！目前版本不保证向前兼容。
 % 2023/12/16 v0.2 将试卷依照最新Word模板更新
@@ -29,9 +29,10 @@
 \setlength{\parindent}{0pt}
 \setlength{\headheight}{13pt}
 
-% Set default enumeration to (a), (b), (c), ...
+% Set default enumeration to (A), (B), (C), ...
 \RequirePackage{enumitem}
-\setenumerate{label=(\alph*)}
+\setenumerate{label=(\Alph*)}
+
 
 % Solution environment
 \NewEnviron{answer}[1][1in]{

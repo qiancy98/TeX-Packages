@@ -8,17 +8,39 @@
 \newcommand{\course}{Course}
 \newcommand{\courseterm}{2023 至 2024 学年\ 第 1 学期}
 \maketitle
-\question{题目题目}
+\question{选择题\points{2}}
 \begin{subquestion}
-	题目题目
+    问题1\putchoice{A}
+    \begin{enumerate}
+        \item 选项1
+        \item 选项2
+        \item 选项3
+        \item 选项4
+    \end{enumerate}
 \end{subquestion}
+\question{填空题\points{5}}
 \begin{subquestion}
-	题目题目
+填空\putfillblank{答案，用\verb|\documentclass[answer]{SJTUexam}|显示之。}
 \end{subquestion}
-\question{题目题目}
 
 \qnewpage
 \scoretable{7}
 % \scoretable[1&2&3&4&5a&5b&5c&]{7}
-
+\question{登分表\verb|\scoretable{7}|请放在第二页起始；用\verb|\scoretable[1&2&3&4&5a&5b&5c&]{7}|以改变题目编号。\points{5+5}}
+\begin{subquestion}
+	用\verb|\documentclass[answer]{SJTUexam}|显示答案。
+\end{subquestion}
+\begin{answer}
+    这里填解答，用\verb|\documentclass[answer]{SJTUexam}|显示之。
+\end{answer}
+\begin{subquestion}
+	题目题目
+\end{subquestion}
+\begin{answer}
+    这里填解答，用\verb|\documentclass[answer]{SJTUexam}|显示之。
+\end{answer}
+\question{题目题目}
+\begin{subquestion}
+	用\verb|\qnewpage|换页。
+\end{subquestion}
 \end{document}
