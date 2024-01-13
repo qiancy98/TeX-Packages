@@ -1,0 +1,142 @@
+% Author: Qian ChengYang
+% E-mail: q-young@qq.com
+% Date:   2024/01/14 Created
+%
+% This file is to explain the hacking to cleveref package to make it work with enumitem package.
+
+% load packages
+\documentclass{article}
+\RequirePackage{amsmath,amsthm,xpatch}
+\newtheorem{theorem}{theorem}[section]
+\RequirePackage{enumitem}
+\RequirePackage{hyperref}
+\RequirePackage{cleveref}
+
+\makeatletter
+% \deal@currentlabel and \cref@resetby@list allow redefined by user. Explanation is in the following code.
+\def\cref@resetby@list{thmenumii,thmenumi;thmenumi,theorem;} % the second item is the parent environment of the first item
+\providecommand{\deal@currentlabel}[2]{\csname the#1\endcsname\kern +.2222em #2} % #1 is the parent environment, #2 is the old label. This command determines how the parent label is displayed in the label of the sub-environment
+
+\@ifpackageloaded{cleveref}{
+    \crefname{thmenumi}{item}{items}
+    \crefalias{thmenumii}{thmenumi}
+
+	% this is the hack to make cref work with enumitem
+    \let\cref@old@resetby\cref@resetby
+	\def\cref@resetby#1#2{%
+		\let#2\relax%
+		\def\@eatall##1\relax{}%
+		\def\@tmpcode##1,##2;{%
+			\let\qcy@next\@eatall% \@next is defined by other packages, so we use \qcy@next instead, where qcy is my name
+			\ifx,##1,\else
+				\ifnum\pdfstrcmp{#1}{##1}=\z@
+					\message{Enter @tmpcode, input=##1,##2; command=#1^^J}% only for debugging
+					\def#2{##2}%
+				\else
+					\let\qcy@next\@tmpcode
+				\fi
+			\fi
+			\qcy@next
+		}%
+		\expandafter\@tmpcode\cref@resetby@list,;\relax
+		\ifx#2\relax%
+			\cref@old@resetby{#1}{#2}%
+		\fi
+	}
+
+	% Now redefine \label so that it behaves like \label in `subcaption' package and allows nesting of `thmenum' environment
+	%%begin novalidate % 关闭Overleaf代码检查
+	\xpatchcmd{\begin}{\begingroup}{\begingroup\let\@parentenvir\@currenvir}{}{}
+	%%end novalidate
+	\def\deal@cref@currentlabel[#1][#2][#3]#4\relax{[#1][#2][#3]\@currentlabel}%
+	\providecommand{\setsublabel}[1][theorem]{%
+		\let\old@label\label@optarg
+		\let\thmenum@parent\@parentenvir
+		\renewcommand{\label}[2][\thmenum@parent]{%
+			\old@label[#1]{sub@##2}%
+			\begingroup
+				\let\old@currentlabel\@currentlabel
+				\edef\@currentlabel{\deal@currentlabel{#1}\old@currentlabel}%
+				\let\old@currentlabel\cref@currentlabel
+				\edef\cref@currentlabel{\expandafter\deal@cref@currentlabel\old@currentlabel\relax}%
+				\old@label[#1]{##2}%
+			\endgroup
+		}%
+	}
+}{
+    \providecommand{\setsublabel}[1][theorem]{%
+        \let\old@label\label
+        \renewcommand{\label}[1]{%
+            \old@label{sub@##1}%
+            \begingroup
+                \let\old@currentlabel\@currentlabel
+                \edef\@currentlabel{\deal@currentlabel{#1}\old@currentlabel}%
+                \old@label{##1}%
+            \endgroup
+        }%
+    }
+}
+\makeatother
+
+% define thmenum
+\newlist{thmenum}{enumerate}{2}
+\setlist[thmenum,1]{
+    label=(\alph*),
+    before=\setsublabel
+}
+\setlist[thmenum,2]{
+    label=(\roman*),
+    ref=(\alph{thmenumi}.\roman*)
+}
+
+% The following code shows how to use thmenum
+% and how the hacks change the behavior of \cref
+\begin{document}
+\begin{theorem}
+    \label{0}
+    \begin{thmenum}[start=4]
+        \item q\label{1}q
+            \begin{thmenum}[start=3]
+                \item q\label{2}q
+            \end{thmenum}
+    \end{thmenum}
+\end{theorem}
+\begin{theorem}
+\label{4}
+\end{theorem}
+
+\textbf{It works properly now:}
+\begin{enumerate}[label=Example \arabic*.]
+	\item 
+	\ref{0}, \ref{1}, \ref{2}, \ref{4} \\
+	\cref{0,1,2,4} 
+	\item
+	\ref{sub@1}, \ref{sub@2} \\
+	\cref{sub@1,sub@2}
+\end{enumerate}
+
+\textbf{Without hack it works like this: (it is unsorted)}
+\makeatletter
+\let\cref@resetby\cref@old@resetby
+\makeatother
+\begin{theorem}
+    \label{unhack:0}
+    \begin{thmenum}[start=4]
+        \item q\label{unhack:1}q
+            \begin{thmenum}[start=3]
+                \item q\label{unhack:2}q
+            \end{thmenum}
+    \end{thmenum}
+\end{theorem}
+\begin{theorem}
+\label{unhack:4}
+\end{theorem}
+\begin{enumerate}[label=Example \arabic*.]
+	\item 
+	\ref{unhack:0}, \ref{unhack:1}, \ref{unhack:2}, \ref{unhack:4} \\
+	\cref{unhack:0,unhack:1,unhack:2,unhack:4} 
+	\item
+	\ref{sub@unhack:1}, \ref{sub@unhack:2} \\
+	\cref{sub@unhack:1,sub@unhack:2}
+\end{enumerate}
+\end{document}

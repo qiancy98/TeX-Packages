@@ -1,5 +1,5 @@
 \NeedsTeXFormat{LaTeX2e}[2019/05/03] % 2019/05/03 is need for \NewDocumentEnvironment
-\ProvidesPackage{QCYPreamable}[2023/10/15 QianCY preamable v0.5a]
+\ProvidesPackage{QCYPreamable}[2024/01/14 QianCY preamable v0.6]
 
 % 待了解：tabu
 
@@ -67,16 +67,7 @@
 }{
     \RequirePackage{enumitem}
 }
-\providecommand{\setsublabel}[1][theorem]{
-    \let\old@label\label
-    \renewcommand{\label}[1]{%
-        \old@label{sub@##1}%
-        \begingroup
-        \renewcommand{\@currentlabel}{\csname the#1\endcsname~\ref{sub@##1}}%
-        \old@label{##1}%
-        \endgroup
-    }
-}
+
 % 支持子图，引用为Figure 1(a)
 \RequirePackage[labelformat=simple]{subcaption}
 \renewcommand*\thesubfigure{(\alph{subfigure})}
@@ -107,6 +98,71 @@
 {
     \RequirePackage[capitalise]{cleveref}
 }
+
+% \deal@currentlabel and \cref@resetby@list allow redefined by user. Explanation is in the following code.
+\def\cref@resetby@list{thmenumii,thmenumi;thmenumi,theorem;} % the second item is the parent environment of the first item
+\providecommand{\deal@currentlabel}[2]{\csname the#1\endcsname\kern +.2222em #2} % #1 is the parent environment, #2 is the old label. This command determines how the parent label is displayed in the label of the sub-environment
+
+\@ifpackageloaded{cleveref}{
+    \crefname{thmenumi}{item}{items}
+    \crefalias{thmenumii}{thmenumi}
+
+	% this is the hack to make cref work with enumitem
+    \let\cref@old@resetby\cref@resetby
+	\def\cref@resetby#1#2{%
+		\let#2\relax%
+		\def\@eatall##1\relax{}%
+		\def\@tmpcode##1,##2;{%
+			\let\qcy@next\@eatall% \@next is defined by other packages, so we use \qcy@next instead, where qcy is my name
+			\ifx,##1,\else
+				\ifnum\pdfstrcmp{#1}{##1}=\z@
+					\message{Enter @tmpcode, input=##1,##2; command=#1^^J}% only for debugging
+					\def#2{##2}%
+				\else
+					\let\qcy@next\@tmpcode
+				\fi
+			\fi
+			\qcy@next
+		}%
+		\expandafter\@tmpcode\cref@resetby@list,;\relax
+		\ifx#2\relax%
+			\cref@old@resetby{#1}{#2}%
+		\fi
+	}
+
+	% Now redefine \label so that it behaves like \label in `subcaption' package and allows nesting of `thmenum' environment
+	%%begin novalidate % 关闭Overleaf代码检查
+	\xpatchcmd{\begin}{\begingroup}{\begingroup\let\@parentenvir\@currenvir}{}{}
+	%%end novalidate
+	\def\deal@cref@currentlabel[#1][#2][#3]#4\relax{[#1][#2][#3]\@currentlabel}%
+	\providecommand{\setsublabel}[1][theorem]{%
+		\let\old@label\label@optarg
+		\let\thmenum@parent\@parentenvir
+		\renewcommand{\label}[2][\thmenum@parent]{%
+			\old@label[#1]{sub@##2}%
+			\begingroup
+				\let\old@currentlabel\@currentlabel
+				\edef\@currentlabel{\deal@currentlabel{#1}\old@currentlabel}%
+				\let\old@currentlabel\cref@currentlabel
+				\edef\cref@currentlabel{\expandafter\deal@cref@currentlabel\old@currentlabel\relax}%
+				\old@label[#1]{##2}%
+			\endgroup
+		}%
+	}
+}{
+    \providecommand{\setsublabel}[1][theorem]{%
+        \let\old@label\label
+        \renewcommand{\label}[1]{%
+            \old@label{sub@##1}%
+            \begingroup
+                \let\old@currentlabel\@currentlabel
+                \edef\@currentlabel{\deal@currentlabel{#1}\old@currentlabel}%
+                \old@label{##1}%
+            \endgroup
+        }%
+    }
+}
+
 \ifDraftMode
     \RequirePackage[notref,notcite]{showkeys}
 \fi

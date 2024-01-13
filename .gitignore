@@ -5,9 +5,11 @@
 *.fdb_latexmk
 *.fls
 *.log
+*.out
 
 # 测试文件
 tmp.*
 
-# ？？？
+# downloaded templates
 tex/latex/CJM-AuthorTemplate/*
+tex/latex/PEM-author-template1/*
