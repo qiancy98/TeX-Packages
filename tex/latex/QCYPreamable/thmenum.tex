@@ -6,7 +6,7 @@
 
 % load packages
 \documentclass{article}
-\RequirePackage{amsmath,amsthm,xpatch}
+\RequirePackage{amsmath,amsthm}
 \newtheorem{theorem}{theorem}[section]
 \RequirePackage{enumitem}
 \RequirePackage{hyperref}
@@ -45,21 +45,22 @@
 	}
 
 	% Now redefine \label so that it behaves like \label in `subcaption' package and allows nesting of `thmenum' environment
-	%%begin novalidate % 关闭Overleaf代码检查
-	\xpatchcmd{\begin}{\begingroup}{\begingroup\let\@parentenvir\@currenvir}{}{}
-	%%end novalidate
+	\AddToHook{env/thmenum/before}{% 首次进入 thmenum 环境时，设置 \thmenum@parent 用来保存父环境的标签
+		\ifdefined \thmenum@parent \else
+			\let\thmenum@parent\@currenvir
+		\fi
+	}
 	\def\deal@cref@currentlabel[#1][#2][#3]#4\relax{[#1][#2][#3]\@currentlabel}%
 	\providecommand{\setsublabel}[1][theorem]{%
 		\let\old@label\label@optarg
-		\let\thmenum@parent\@parentenvir
 		\renewcommand{\label}[2][\thmenum@parent]{%
-			\old@label[#1]{sub@##2}%
+			\old@label[##1]{sub@##2}%
 			\begingroup
 				\let\old@currentlabel\@currentlabel
 				\edef\@currentlabel{\deal@currentlabel{#1}\old@currentlabel}%
 				\let\old@currentlabel\cref@currentlabel
 				\edef\cref@currentlabel{\expandafter\deal@cref@currentlabel\old@currentlabel\relax}%
-				\old@label[#1]{##2}%
+				\old@label[##1]{##2}%
 			\endgroup
 		}%
 	}
