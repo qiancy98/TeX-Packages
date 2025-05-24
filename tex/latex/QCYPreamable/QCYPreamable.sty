@@ -99,8 +99,8 @@
 }
 
 % \deal@currentlabel and \cref@resetby@list allow redefined by user. Explanation is in the following code.
-\def\cref@resetby@list{thmenumii,thmenumi;thmenumi,theorem;} % the second item is the parent environment of the first item
-\providecommand{\deal@currentlabel}[2]{\csname the#1\endcsname\kern +.2222em #2} % #1 is the parent environment, #2 is the old label. This command determines how the parent label is displayed in the label of the sub-environment
+\def\cref@resetby@list{thmenumi,theorem;} % the second item is the parent environment of the first item
+\def\creflabel@prefix#1{\csname the#1\endcsname\kern0.08em} % #1 is the parent environment. This command determines how the parent label is displayed in the label of the sub-environment
 
 \@ifpackageloaded{cleveref}{
     \crefname{thmenumi}{item}{items}
@@ -115,7 +115,7 @@
             \let\qcy@next\@eatall% \@next is defined by other packages, so we use \qcy@next instead, where qcy is my name
             \ifx,##1,\else
                 \ifnum\pdfstrcmp{#1}{##1}=\z@
-                    \message{Enter @tmpcode, input=##1,##2; command=#1^^J}% only for debugging
+                    % \message{Enter @tmpcode, input=##1,##2; command=#1^^J}% only for debugging
                     \def#2{##2}%
                 \else
                     \let\qcy@next\@tmpcode
@@ -129,23 +129,31 @@
         \fi
     }
 
-    % Now redefine \label so that it behaves like \label in `subcaption' package and allows nesting of `thmenum' environment
-    \AddToHook{env/thmenum/before}{% 首次进入 thmenum 环境时，设置 \thmenum@parent 用来保存父环境的标签
+    % 改一下 \label 的定义，这样即使共用计数器, 也能正常工作
+    % 不过case环境的label就变成case而非casei了, 后续定义一下\crefalias
+    \def\expandtodocument{document}
+    \AtBeginDocument{
+        \def\label#1{\ifx\@currenvir\expandtodocument\label@noarg{#1}\else\label@optarg[\@currenvir]{#1}\fi}
+    }
+
+    % 首次进入 thmenum 环境时，设置 \thmenum@parent 用来保存父环境的标签
+    \AddToHook{env/thmenum/before}{
         \ifdefined \thmenum@parent \else
             \let\thmenum@parent\@currenvir
         \fi
     }
-    \def\deal@cref@currentlabel[#1][#2][#3]#4\relax{[#1][#2][#3]\@currentlabel}%
+
+    % Now redefine \label so that it behaves like \label in `subcaption' package and allows nesting of `thmenum' environment
+    \def\deal@cref@currentlabel[#1][#2][#3]{[#1][#2][#3]\this@creflabel@prefix}%
     \providecommand{\setsublabel}[1][theorem]{%
-        \let\old@label\label@optarg
         \renewcommand{\label}[2][\thmenum@parent]{%
-            \old@label[##1]{sub@##2}%
             \begingroup
-                \let\old@currentlabel\@currentlabel
-                \edef\@currentlabel{\deal@currentlabel{#1}\old@currentlabel}%
-                \let\old@currentlabel\cref@currentlabel
-                \edef\cref@currentlabel{\expandafter\deal@cref@currentlabel\old@currentlabel\relax}%
-                \old@label[##1]{##2}%
+                \label@optarg[##1]{sub@##2}%
+                \edef\this@creflabel@prefix{\creflabel@prefix{#1}}%
+                \edef\@currentlabel{\this@creflabel@prefix\@currentlabel}%
+                \expandafter\edef\csname the\@currenvir i\endcsname{\this@creflabel@prefix\csname the\@currenvir i\endcsname}% 不知道为什么\label@optarg里的\old@label会重新定义\cref@currentlabel
+                \protected@edef\cref@currentlabel{\expandafter\deal@cref@currentlabel\cref@currentlabel}%
+                \label@optarg[##1]{##2}%
             \endgroup
         }%
     }
@@ -168,8 +176,12 @@
 \fi
 
 \DeclareRobustCommand{\ProofStyle}[2][\square]{
-    \cspreto{#2}{\pushQED{{\hspace*{\fill}\ensuremath{#1}}}}
-    \cspreto{end#2}{\popQED}
+    \AddToHook{env/#2/begin}{%
+        \pushQED{{\hspace*{\fill}\ensuremath{#1}}}%
+    }
+    \AddToHook{env/#2/end}{%
+        \popQED%
+    }
 }
 
 % Environments
@@ -226,11 +238,12 @@
         listparindent=\parindent
     }
     \setlist[case,1]{label=\arabic*}
-    \crefname{casei}{Case}{Cases}
-    \crefname{caseii}{Case}{Cases}
-    \crefname{caseiii}{Case}{Cases}
-    \crefname{caseiv}{Case}{Cases}
-    \crefname{casev}{Case}{Cases}
+    \crefname{case}{Case}{Cases}
+    \crefalias{casei}{case}
+    \crefalias{caseii}{case}
+    \crefalias{caseiii}{case}
+    \crefalias{caseiv}{case}
+    \crefalias{casev}{case}
     % 这段代码有bug
     % \ExplSyntaxOn
     % \int_new:N \l_QCYPreamable_adder_int
